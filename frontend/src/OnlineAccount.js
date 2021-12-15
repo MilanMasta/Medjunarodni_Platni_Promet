@@ -37,7 +37,7 @@ const OnlineAccount = () => {
     JSON.parse(localStorage.getItem("user"))
   );
   const [currencyOptions, setCurrencyOption] = useState([]);
-  const [payment, setPayment] = useState(0);
+  const [payment, setPayment] = useState({ amount: 0 });
   const [error, setError] = useState("");
   const [creditCard, setcreditCard] = useState({
     number: "",
@@ -85,24 +85,30 @@ const OnlineAccount = () => {
   const handleChange2 = (e) => {
     const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
     const value = e.target.value;
-    setPayment(value); //person su prazna polja ukoliko nije nista proslijedjeno na unosu
+    setPayment({ ...payment, [name]: value }); //person su prazna polja ukoliko nije nista proslijedjeno na unosu
+    console.log("val" + payment.amount);
   };
   const handleSubmit2 = (e) => {
     e.preventDefault();
-    if (payment) {
-      depositOnAccount(payment)
-        .then((item) => {
-          if (item !== "Uplata nije uspjela.") {
-            window.localStorage.setItem("user", JSON.stringify(item));
-            setError("");
-          } else {
-            setError(item);
-          }
-        })
-        .then(() => {
-          setPerson(window.localStorage.getItem("user"));
-          window.location.reload();
-        });
+    console.log(payment);
+    if (payment.amount) {
+      if (payment.amount >= 1) {
+        depositOnAccount(payment)
+          .then((item) => {
+            if (item !== "Deposit failed.") {
+              window.localStorage.setItem("user", JSON.stringify(item));
+              setError("");
+            } else {
+              setError(item);
+            }
+          })
+          .then(() => {
+            setPerson(window.localStorage.getItem("user"));
+            window.location.reload();
+          });
+      } else {
+        setError("Unesite kolicinu za uplatu vecu od 0.");
+      }
     } else {
       setError("Unesite kolicinu za uplatu sa kartice.");
     }
@@ -151,9 +157,9 @@ const OnlineAccount = () => {
                       <InputLeftElement children={<Icon as={InfoIcon} />} />
                       <Input
                         type="number"
-                        name="payment"
-                        id="payment"
-                        value={payment}
+                        name="amount"
+                        id="amount"
+                        value={payment.amount}
                         onChange={handleChange2}
                         placeholder="Kolicina"
                         variant="filled"
