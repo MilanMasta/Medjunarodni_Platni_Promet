@@ -1,18 +1,18 @@
 from OnlineAccount import OnlineAccount
 class User:
-    def __init__(self, id, ime, prezime, adresa, grad, drzava, brTelefona, email, lozinka, brojPlatneKartice):
+    def __init__(self, id, name, lastname, address, city, country, phoneNumber, email, password, creditCardNum):
         self.id = id
-        self.name = ime
-        self.lastname = prezime
-        self.address = adresa
-        self.city = grad
-        self.country = drzava
-        self.phoneNumber = brTelefona
+        self.name = name
+        self.lastname = lastname
+        self.address = address
+        self.city = city
+        self.country = country
+        self.phoneNumber = phoneNumber
         self.email = email
-        self.password = lozinka
+        self.password = password
         self.verified = False
         self.onlineAccount = OnlineAccount(-1).__dict__
-        self.creditCardNum = brojPlatneKartice
+        self.creditCardNum = creditCardNum
 
     def get_id(self):
         return self.id
@@ -77,8 +77,8 @@ class User:
     def get_onlineRacun(self):
         return self.onlineRacun
 
-    def set_onlineAccount(self, onlineAccount):
-        self.onlineAccount = onlineAccount
+    def set_onlineAccountBalance(self, balance):
+        self.onlineAccount["balance"] += balance
 
     def get_creditCardNum(self):
         return self.creditCardNum

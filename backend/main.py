@@ -7,7 +7,7 @@ from CreditCard import CreditCard
 
 
 app = Flask(__name__)
-user = '{"id": "0", "ime": "", "prezime": "", "adresa": "", "grad": "", "drzava": "", "brTelefona": "", "email": "", "lozinka": ""}'
+user = '{"id": "0", "name": "", "lastname": "", "address": "", "city": "", "country": "", "phoneNumber": "", "email": "", "password": ""}'
 x = []
 
 creditCard = CreditCard(1, "Max Verstappen", "30.05.2022.", 225883)
@@ -18,14 +18,14 @@ def register():
     req = request.json
     print(req)
     user.set_id(req["id"])
-    user.set_name(req["ime"])
-    user.set_lastname(req["prezime"])
-    user.set_address(req["adresa"])
-    user.set_city(req["grad"])
-    user.set_country(req["drzava"])
-    user.set_phoneNumber(req["brTelefona"])
+    user.set_name(req["name"])
+    user.set_lastname(req["lastname"])
+    user.set_address(req["address"])
+    user.set_city(req["city"])
+    user.set_country(req["country"])
+    user.set_phoneNumber(req["phoneNumber"])
     user.set_email(req["email"])
-    user.set_password(req["lozinka"])
+    user.set_password(req["password"])
     user.set_verified(False)
     print(user)
     print("SUPER MAX")
@@ -37,27 +37,27 @@ def login():
     if(req["password"] == user.password and req["email"] == user.email):
         return json.dumps(user.__dict__)
     else:
-        return "Invalid email."
+        return "Invalid password."
 
 @app.route("/changeAccount", methods=['POST'])
 def changeAccount():
     req = request.json
     user.set_id(req["id"])
-    user.set_name(req["ime"])
-    user.set_lastname(req["prezime"])
-    user.set_address(req["adresa"])
-    user.set_city(req["grad"])
-    user.set_country(req["drzava"])
-    user.set_phoneNumber(req["brTelefona"])
+    user.set_name(req["name"])
+    user.set_lastname(req["lastname"])
+    user.set_address(req["address"])
+    user.set_city(req["city"])
+    user.set_country(req["country"])
+    user.set_phoneNumber(req["phoneNumber"])
     user.set_email(req["email"])
-    user.set_password(req["lozinka"])
+    user.set_password(req["password"])
     return "Updated."
 
 @app.route("/accountVerification", methods=['POST'])
 def accountVerification():
     req = request.json
 
-    if(creditCard.get_number() == int(req["broj"]) and creditCard.get_csc() == int(req["sigurnosniKod"])):
+    if(creditCard.get_number() == int(req["number"]) and creditCard.get_csc() == int(req["csc"])):
         user.set_verified(True)
         creditCard.set_balance(creditCard.get_balance() - 1)
         print("Verified.")
@@ -67,6 +67,19 @@ def accountVerification():
         return "Verification failed."
 
     return "Azurirano."
+
+@app.route("/depositOnAccount", methods=['POST'])
+def depositOnAccount():
+    req = request.json
+    print(req["amount"])
+    if(int(req["amount"]) <= creditCard.get_balance()):
+        user.set_onlineAccountBalance(int(req["amount"]))
+        print("DEPOSIT DONE.")
+        return json.dumps(user.__dict__)
+    else:
+        print("DEPOSIT FAILED.")
+        return "Deposit failed."
+
 
 
 if __name__=="__main__":
