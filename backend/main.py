@@ -34,6 +34,7 @@ def register():
     user.set_verified(False)
     
     users[user.get_email()]=user
+    print(user)
     return "Successfully registered."
 
 @app.route("/login", methods=['POST'])
@@ -41,12 +42,14 @@ def login():
     req = request.json
     if req["email"] in users:  
         if User(users[req["email"]]).get_password() == req["password"]:
-             return json.dumps(user.__dict__)
+             return user.userToJSON()
         else:
             return "Invalid password."
     else:
         return "User doesn't exits."
-    
+  
+
+
 @app.route("/changeAccount", methods=['POST'])
 def changeAccount():
     req = request.json
@@ -75,34 +78,40 @@ def accountVerification():
     if req["number"] in creditCards:
         if (creditCards[int(req["number"])]).get_csc() == int(req["csc"]) : 
             if (creditCards[int(req["number"])]).get_expirationDate() == int(req["expirationDate"]):
-                if req["email"] in users:
-                    users[req["email"]].set_verified(True)
+                if int(req["id"]) in users:
+                    users[int(req["id"])].set_verified(True)
+                else:
+                    return "Id for verification doesn't exists."
                 creditCards[int(req["number"])].withdraw(1)
                 print("Verified.")
-                return json.dumps(user.__dict__)
-    if(creditCard.get_number() == int(req["number"]) and creditCard.get_csc() == int(req["csc"])):
-        if req["email"] in users:
-            users[req["email"]].set_verified(True)
-        creditCard.set_balance(creditCard.get_balance() - 1)
-        print("Verified.")
-        return json.dumps(user.__dict__)
+                return user.userToJSON()
+            else:
+                return "Invalid expiration date."
+        else:
+            return "Invalid CSC."
     else:
-        print("Not verified")
         return "Verification failed."
-
-    return "Azurirano."
 
 @app.route("/depositOnAccount", methods=['POST'])
 def depositOnAccount():
     req = request.json
     print(req["amount"])
-    if(int(req["amount"]) <= creditCard.get_balance()):
-        user.set_onlineAccountBalance(int(req["amount"]))
-        print("DEPOSIT DONE.")
-        return json.dumps(user.__dict__)
+    print(req["rsdBalance"])
+    #imacemo i email u req -> (req["email"])
+    #ISPRAVKA: trebali bismo da imamo id u req a ne email jer imamo dict u kom je kljuc id usera
+    # stoga-> 
+    if int(req["id"]) in users:
+        user=users[int(req["id"])]
+    pom_creditCard=None
+    if user.get_creditCardNum()  in creditCards:
+        pom_creditCard=creditCards[user.get_creditCardNum()]
+    if((int(req["amount"]) + int(req["rsdBalance"]))  <= pom_creditCard.get_balance()):
+        users[user.get_id()].depositRSDOnAccount(int(req["amount"]))
+        print("Successfully deposited.")
+        return user.userToJSON()
     else:
         print("DEPOSIT FAILED.")
-        return "Deposit failed."
+        return "Deposition failed." # promenila sam string za return ali ne vidim gde na frontu treba da ga izmenim
 
 
 
