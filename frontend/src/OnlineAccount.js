@@ -40,7 +40,7 @@ const OnlineAccount = () => {
   const [payment, setPayment] = useState({
     amount: "",
     rsdBalance: "",
-    email: "",
+    id: "",
   });
 
   const [array, setArray] = useState([]);
@@ -52,7 +52,7 @@ const OnlineAccount = () => {
     expirationDate: "",
     csc: "",
     balance: 0,
-    id: ""
+    id: person.id,
   });
 
   useEffect(() => {
@@ -69,7 +69,7 @@ const OnlineAccount = () => {
 
   useEffect(() => {
     var rsdbal = person.onlineAccount.balances["RSD"];
-    setPayment({ amount: "", rsdBalance: rsdbal, email: person.email });
+    setPayment({ amount: "", rsdBalance: rsdbal, id: person.id });
   }, [person]);
   const handleChange = (e) => {
     const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
@@ -78,10 +78,11 @@ const OnlineAccount = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
-    creditCard.id=person.id;
+    creditCard.id = person.id;
     if (creditCard.number && creditCard.csc) {
       accountVerification(creditCard)
         .then((item) => {
+          console.log(item);
           if (item !== "Verification failed.") {
             window.localStorage.setItem("user", JSON.stringify(item));
             setError("");
@@ -111,19 +112,21 @@ const OnlineAccount = () => {
     if (payment.amount) {
       if (payment.amount >= 1) {
         console.log(array);
-        // depositOnAccount(payment)
-        //   .then((item) => {
-        //     if (item !== "Deposit failed.") {
-        //       window.localStorage.setItem("user", JSON.stringify(item));
-        //       setError("");
-        //     } else {
-        //       setError(item);
-        //     }
-        //   })
-        //   .then(() => {
-        //     setPerson(window.localStorage.getItem("user"));
-        //     window.location.reload();
-        //   });
+        depositOnAccount(payment)
+          .then((item) => {
+            if (item !== "Deposition failed.") {
+              window.localStorage.setItem("user", JSON.stringify(item));
+              setError("");
+            } else {
+              setError(item);
+            }
+          })
+          .then(() => {
+            if (error !== "Deposition failed.") {
+              setPerson(window.localStorage.getItem("user"));
+              window.location.reload();
+            }
+          });
       } else {
         setError("Unesite kolicinu za uplatu vecu od 0.");
       }

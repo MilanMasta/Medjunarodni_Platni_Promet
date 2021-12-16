@@ -40,7 +40,7 @@ const LoginForm = () => {
     if (
       message !== "Invalid password." &&
       message !== "Invalid email." &&
-      message !== "Unesite podatke za prijavu." &&
+      message !== "User doesn't exist." &&
       message !== ""
     ) {
       setMessage("");
@@ -60,7 +60,7 @@ const LoginForm = () => {
     if (person.email && person.password) {
       //sad treba poslati objekat serveru
       login(person).then((item) => {
-        if (item === "Invalid password." || item === "User doesn't exists.") {
+        if (item === "Invalid password." || item === "User doesn't exist.") {
           setMessage(item);
         } else {
           setMessage("ok");

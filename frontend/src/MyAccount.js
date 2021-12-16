@@ -64,10 +64,10 @@ const MyAccount = () => {
       person.phoneNumber &&
       person.email &&
       person.password === password2
-      ) {
-          changeAccount(person).then((item) => {
-            setMessage(item);
-        });
+    ) {
+      changeAccount(person).then((item) => {
+        setMessage(item); //mozda treba provjerovati da li je item=="Updated." jer moze server da ne ivrsi zbog necega i ako je ovam osve ok
+      });
       localStorage.setItem("user", JSON.stringify(person));
       setPassword2("");
       setError("");
