@@ -38,8 +38,8 @@ const LoginForm = () => {
     console.log("Odgovor apija ispod:");
     console.log(message);
     if (
-      message !== "Netacna lozinka." &&
-      message !== "Nepostojeci korisnik." &&
+      message !== "Invalid password." &&
+      message !== "Invalid email." &&
       message !== "Unesite podatke za prijavu." &&
       message !== ""
     ) {
