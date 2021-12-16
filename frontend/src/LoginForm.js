@@ -60,8 +60,7 @@ const LoginForm = () => {
     if (person.email && person.password) {
       //sad treba poslati objekat serveru
       login(person).then((item) => {
-        console.log("then");
-        if (item === "Invalid password." || item === "Invalid email.") {
+        if (item === "Invalid password." || item === "User doesn't exists.") {
           setMessage(item);
         } else {
           setMessage("ok");

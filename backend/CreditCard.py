@@ -36,3 +36,9 @@ class CreditCard:
 
     def set_balance(self, balance):
         self.balance = balance
+        
+    def withdraw(self,amount):
+        self.balance -= amount
+        
+    def deposit(self,amount):
+        self.balance += amount

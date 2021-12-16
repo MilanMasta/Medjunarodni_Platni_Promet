@@ -52,6 +52,7 @@ const OnlineAccount = () => {
     expirationDate: "",
     csc: "",
     balance: 0,
+    email: ""
   });
 
   useEffect(() => {
@@ -77,6 +78,7 @@ const OnlineAccount = () => {
   };
   const handleSubmit = (e) => {
     e.preventDefault();
+    creditCard.email=person.email;
     if (creditCard.number && creditCard.csc) {
       accountVerification(creditCard)
         .then((item) => {
@@ -92,7 +94,7 @@ const OnlineAccount = () => {
           window.location.reload();
         });
     } else {
-      setError("Unesite sve podatke za verifikaciu.");
+      setError("Unesite sve podatke za verifikaciju.");
     }
   };
 

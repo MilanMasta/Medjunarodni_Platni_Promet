@@ -64,10 +64,10 @@ const MyAccount = () => {
       person.phoneNumber &&
       person.email &&
       person.password === password2
-    ) {
-      changeAccount(person).then((item) => {
-        setMessage(item);
-      });
+      ) {
+          changeAccount(person).then((item) => {
+            setMessage(item);
+        });
       localStorage.setItem("user", JSON.stringify(person));
       setPassword2("");
       setError("");
