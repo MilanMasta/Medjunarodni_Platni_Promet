@@ -28,16 +28,16 @@ def register():
     user.set_password(req["password"])
     user.set_verified(False)
     print(user)
-    print("SUPER MAX")
     return "Successfully registered."
 
 @app.route("/login", methods=['POST'])
 def login():
     req = request.json
     if(req["password"] == user.password and req["email"] == user.email):
-        return json.dumps(user.__dict__)
+        return user.userToJSON()
     else:
         return "Invalid password."
+
 
 @app.route("/changeAccount", methods=['POST'])
 def changeAccount():
@@ -60,8 +60,9 @@ def accountVerification():
     if(creditCard.get_number() == int(req["number"]) and creditCard.get_csc() == int(req["csc"])):
         user.set_verified(True)
         creditCard.set_balance(creditCard.get_balance() - 1)
+        user.set_onlineAccountBalance(0, "RSD")
         print("Verified.")
-        return json.dumps(user.__dict__)
+        return user.userToJSON()
     else:
         print("Not verified")
         return "Verification failed."
@@ -72,10 +73,13 @@ def accountVerification():
 def depositOnAccount():
     req = request.json
     print(req["amount"])
-    if(int(req["amount"]) <= creditCard.get_balance()):
-        user.set_onlineAccountBalance(int(req["amount"]))
+    print(req["rsdBalance"])
+    #imacemo i email u req -> (req["email"])
+
+    if((int(req["amount"]) + int(req["rsdBalance"]))  <= creditCard.get_balance()):
+        user.depositRSDOnAccount(int(req["amount"]))
         print("DEPOSIT DONE.")
-        return json.dumps(user.__dict__)
+        return user.userToJSON()
     else:
         print("DEPOSIT FAILED.")
         return "Deposit failed."

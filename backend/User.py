@@ -1,4 +1,7 @@
 from OnlineAccount import OnlineAccount
+import json
+import copy
+
 class User:
     def __init__(self, id, name, lastname, address, city, country, phoneNumber, email, password, creditCardNum):
         self.id = id
@@ -11,7 +14,7 @@ class User:
         self.email = email
         self.password = password
         self.verified = False
-        self.onlineAccount = OnlineAccount(-1).__dict__
+        self.onlineAccount = OnlineAccount(-1)
         self.creditCardNum = creditCardNum
 
     def get_id(self):
@@ -77,8 +80,8 @@ class User:
     def get_onlineRacun(self):
         return self.onlineRacun
 
-    def set_onlineAccountBalance(self, balance):
-        self.onlineAccount["balance"] += balance
+    def set_onlineAccountBalance(self, balance, key):
+        self.onlineAccount.set_balances(balance, key)
 
     def get_creditCardNum(self):
         return self.creditCardNum
@@ -86,6 +89,15 @@ class User:
     def set_creditCardNum(self, creditCardNum):
         self.creditCardNum = creditCardNum
 
+    def depositRSDOnAccount(self, value):
+        self.onlineAccount.depositRSD(value)
+
     def __str__(self):
         return f"ID : {self.id}\nName : {self.name}\nLastname : {self.lastname}\nAddress : {self.address}\nCity: {self.city}\nCountry : {self.country}\n" \
                f"Phone number : {self.phoneNumber}\nEmail : {self.email}\nPassword : {self.password}."
+
+
+    def userToJSON(self):
+        pom = copy.deepcopy(self)
+        pom.onlineAccount = pom.onlineAccount.__dict__
+        return json.dumps(pom.__dict__)
