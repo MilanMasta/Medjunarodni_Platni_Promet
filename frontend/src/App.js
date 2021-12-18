@@ -45,6 +45,7 @@ function App() {
   // );
 
   const [user, setUser] = useState(null);
+
   useEffect(() => {
     setUser(JSON.parse(localStorage.getItem("user")));
   }, [localStorage.getItem("user")]);
@@ -161,5 +162,4 @@ function App() {
     </>
   );
 }
-
 export default App;
