@@ -20,7 +20,7 @@ export const login = (user) => {
   let addr = readConfigFile();
   console.log("ispis addr=" + addr);
   return axios
-    .get(addr + "/login", user)
+    .post(addr + "/login", user)
     .then((response) => {
       const item = response.data;
       console.log("bajaga:" + item);
