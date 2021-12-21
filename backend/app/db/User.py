@@ -1,6 +1,8 @@
 import copy
 import json
 from backend.app.db import db
+from backend.app.db.Balances import Balances
+
 
 class User(db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -14,8 +16,12 @@ class User(db.Model):
     password = db.Column(db.String(100), nullable=False)
     verified = db.Column(db.Boolean, default=False)
     creditCards = db.relationship('CreditCard', backref='id', lazy=True)
+    balancesRelation = db.relationship('Balances', backref='id', lazy=True)
 
     def userToJSON(self):
-        pom = copy.deepcopy(self)
-        pom.onlineAccount = pom.onlineAccount.__dict__
-        return json.dumps(pom.__dict__)
+        balances = Balances.query.filter_by(user_id='{}'.format(self.id)).all()
+        data = {}
+        for b in balances:
+            data[b.valute] = b.balance
+        return json.dumps({"id":self.id, "name":self.name, "lastname":self.lastname, "address":self.address, "city":self.city, "country":self.country, "phoneNumber":self.phoneNumber, "email":self.email, "verified":self.verified, "password":self.password, "balances":data})
+

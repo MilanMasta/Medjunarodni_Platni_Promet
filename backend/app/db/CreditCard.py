@@ -1,8 +1,8 @@
 from backend.app import db
 
 class CreditCard(db.Model):
-    number = db.Column(db.Integer, primary_key=True)
-    username = db.Column(db.String(50), unique=True, nullable=False)
+    ide = db.Column(db.Integer, primary_key=True)
+    number = db.Column(db.String(50))
     expirationDate = db.Column(db.String(20), nullable=False)
     csc = db.Column(db.Integer, nullable=False)
     balance = db.Column(db.Integer)
