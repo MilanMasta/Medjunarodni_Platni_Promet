@@ -68,7 +68,8 @@ const OnlineAccount = () => {
   }, []);
 
   useEffect(() => {
-    var rsdbal = person.onlineAccount.balances["RSD"];
+    var rsdbal = person.balances["RSD"];
+    console.log(rsdbal);
     setPayment({ amount: "", rsdBalance: rsdbal, id: person.id });
   }, [person]);
   const handleChange = (e) => {
@@ -80,6 +81,7 @@ const OnlineAccount = () => {
     e.preventDefault();
     creditCard.id = person.id;
     if (creditCard.number && creditCard.csc) {
+      console.log(creditCard);
       accountVerification(creditCard)
         .then((item) => {
           console.log(item);
@@ -222,7 +224,7 @@ const OnlineAccount = () => {
             <>
               <Button
                 textColor="gray.200"
-                colorScheme="green"
+                colorScheme="red"
                 textColor="black"
                 margin={1}
               >

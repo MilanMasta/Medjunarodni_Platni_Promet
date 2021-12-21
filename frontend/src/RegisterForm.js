@@ -75,7 +75,11 @@ const RegisterForm = () => {
     ) {
       console.log(person);
       register(person).then((item) => {
-        setMessage(item);
+        if (item === "E-mail already exists.") {
+          setError(item);
+        } else {
+          setMessage(item);
+        }
       });
       setPerson({
         id: 0,
