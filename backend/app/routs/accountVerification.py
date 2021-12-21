@@ -1,22 +1,43 @@
+import datetime
 
+from backend.app.db.User import User
+from backend.app.db.CCards import CCards
+from backend.app.db.CreditCard import CreditCard
+from flask import request
+from backend.app import app
+from backend.app.db import db
 
-
-
-# @app.route("/accountVerification", methods=['POST'])
-# def accountVerification():
-#     req = request.json
-#     if int(req["number"]) in creditCards:
-#         if (creditCards[int(req["number"])]).get_csc() == int(req["csc"]) :
-#             #provjeriti expirationDate sa danasnjim datumom (dd/yy)
-#             if int(req["id"]) in users:
-#                 users[int(req["id"])].set_verified(True)
-#             else:
-#                 return "Id for verification doesn't exists."
-#             creditCards[int(req["number"])].withdraw(1)
-#             users[req["id"]].set_onlineAccountBalance(0,"RSD")
-#             print("Verified.")
-#             return users[req["id"]].userToJSON()
-#         else:
-#             return "Invalid CSC."
-#     else:
-#         return "Verification failed."
+@app.route("/accountVerification", methods=['POST'])
+def accountVerification():
+    req = request.json
+    a = int(datetime.date.today().year)
+    b = int(datetime.date.today().month)
+    try:
+        cCard =CCards.query.filter_by(number='{}'.format(req["number"]),csc='{}'.format(req["csc"])).one() #NUMBER DOESN'T EXIST
+        y = str(cCard.expirationDate).split("/")
+        m = int(y[0])
+        y1 = int("20" + y[1])
+        if(a < y1):
+            try:
+                idUser = req["id"]
+                CreditCard.query.filter_by(user_id='{}'.format(idUser)).one()
+                return "Verification failed."
+            except:
+                kar = CreditCard(number=cCard.number, csc=cCard.csc, balance=cCard.balance, user_id=idUser,expirationDate=cCard.expirationDate)
+                db.session.add(kar)
+                db.session.commit()
+                user = User.query.filter_by(id='{}'.format(idUser)).one()
+                user.verified = True
+                db.session.commit()
+                return user.userToJSON()
+        elif (a == y1):
+            if (b < m):
+                try:
+                    CreditCard.query.filter_by(user_id='{}'.format(req["id"])).one()
+                    return "Verification failed."
+                except:
+                    kar = CreditCard(number=cCard.number, csc=cCard.csc, balance=cCard.balance, user_id=req["id"], expirationDate=cCard.expirationDate)
+                    db.session.add(kar)
+                    db.session.commit()
+    except:
+        return "Verification failed."
