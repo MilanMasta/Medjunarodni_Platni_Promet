@@ -26,20 +26,3 @@ def depositOnAccount():
         return user.userToJSON()
     else:
         return "Deposition failed."
-
-
-
-
-#     print()
-#     print()
-#     if int() in users:
-#         user=users[int(req["id"])]
-#     pom_creditCard=None
-#     if user.get_creditCardNum()  in creditCards:
-#         pom_creditCard=creditCards[user.get_creditCardNum()]
-#     if((int(req["amount"]) + int(req["rsdBalance"]))  <= pom_creditCard.get_balance()):
-#         users[user.get_id()].depositRSDOnAccount(int(req["amount"]))
-#         return user.userToJSON()
-#     else:
-#         print("DEPOSIT FAILED.")
-#

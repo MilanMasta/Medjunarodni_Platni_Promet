@@ -1,13 +1,17 @@
-# # import mysql.connector
-import json
-import datetime
-from backend.app.db.Balances import Balances
+# # # import mysql.connector
+# import json
+# import datetime
+# from backend.app.db.Balances import Balances
 # import copy
 #
-from backend.app.db.CCards import CCards
-from backend.app.db.CreditCard import CreditCard
-from backend.app.db.User import User
+# from backend.app.db.CCards import CCards
+# from backend.app.db.CreditCard import CreditCard
 from backend.app.db import db
+from backend.app.db.CCards import CCards
+from backend.app.db.Transaction import Transaction
+from backend.app.Encoder import AlchemyEncoder
+# from backend.app.db.User import User
+# from backend.app.db import db
 # #
 # # connection = mysql.connector.connect(
 # #     user='root',
@@ -38,20 +42,24 @@ from backend.app.db import db
 # # db.session.add(user)
 # # db.session.commit()
 #
-# for i in range(0, 10):
-#     cCards = CCards(number=str(1000000000000000+i), expirationDate="11/22", csc=100+i,balance=1100+i*1540)
-#     db.session.add(cCards)
-#     db.session.commit()
+for i in range(0, 10):
+    cCards = CCards(number=str(1000000000000000+i), expirationDate="11/22", csc=100+i,balance=1100+i*1540)
+    db.session.add(cCards)
+    db.session.commit()
 
 # balance = Balances(balance=0, valute="AUD",user_id=1)
 #
 # print("fdsfds")
 # db.session.add(balance)
 # db.session.commit()
-
-# balance = Balances(balance=0, valute="USD", user_id=7)
-# db.session.add(balance)
+# from backend.app.db import db
+#
+# tra = Transaction(state="U obradi", sender="a" , reciever="1000000000000007",amount=2000,destination="Banka")
+# db.session.add(tra)
 # db.session.commit()
+# from backend.app.db.Balances import Balances
+# senderBalance = Balances.query.filter_by(user_id='{}'.format(1), valute='RSD').one()
+# print(senderBalance.user_id)
 # balances = Balances.query.filter_by(user_id='7').all()
 # for b in balances:
 #     print(b.valute)
@@ -83,3 +91,28 @@ from backend.app.db import db
 # print(kar)
 # user = User.filter_by(id='{}'.format(1)).one()
 # rsdBalanceUser = Balances.filter_by(user_id='{}'.format(1), valute="RSD").one()
+#
+# user = User.query.filter_by(id='{}'.format(2)).one()
+# user.verified = False
+# db.session.commit()
+
+# transactions = Transaction.query.filter_by(senderId='{}'.format(1)).all()
+# data = []
+# for t in transactions:
+#     print(t)
+#     data.append(t.__dict__)
+#
+# # print(data)
+# c = Transaction.query.filter_by(sender='{}'.format(1)).all()
+# print(json.dumps(c, cls=AlchemyEncoder))
+
+
+# data = []
+# json_strng = json.dumps([t.__dict__ for t in transactions])
+# # for t in transactions:
+#
+#     print(t.__dict__)
+#     data.append("id" + f"{t.id}")
+#     # data.append(){ t }
+#return("transactions": data)
+# print(json_strng)
