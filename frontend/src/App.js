@@ -4,6 +4,7 @@ import LoginRegister from "./LoginRegister";
 import LeftMenu from "./LeftMenu";
 import MyAccount from "./MyAccount";
 import OnlineAccount from "./OnlineAccount";
+import TransactionMenu from "./TransactionMenu";
 import { ColorModeSwitcher } from "./ColorModeSwitcher";
 import {
   ChakraProvider,
@@ -26,8 +27,6 @@ import {
   Routes,
   Link as RouteLink,
 } from "react-router-dom";
-
-
 
 function App() {
   // window.localStorage.setItem(
@@ -56,6 +55,7 @@ function App() {
     localStorage.clear();
     window.location.href = "./";
   };
+
   return (
     <>
       <ChakraProvider theme={theme}>
@@ -94,6 +94,17 @@ function App() {
                     margin={1}
                   >
                     Pogledaj profil
+                  </Button>
+                )}
+                {user && (
+                  <Button
+                    onClick={() => (window.location.href = "./TransactionMenu")}
+                    textColor="gray.200"
+                    colorScheme="yellow"
+                    textColor="black"
+                    margin={1}
+                  >
+                    Transakcija
                   </Button>
                 )}
               </Box>
@@ -156,6 +167,7 @@ function App() {
                 <Route path="/" element={<LoginRegister />} />
                 <Route path="/MyAccount" element={<MyAccount />} />
                 <Route path="/OnlineAccount" element={<OnlineAccount />} />
+                <Route path="/TransactionMenu" element={<TransactionMenu />} />
               </Routes>
             </Flex>
           </Flex>

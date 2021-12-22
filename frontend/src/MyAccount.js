@@ -214,22 +214,7 @@ const MyAccount = () => {
                 />
               </InputGroup>
             </FormControl>
-            <FormControl isRequired>
-              <Text fontSize="sm">Email:</Text>
-              <InputGroup>
-                <InputLeftElement children={<Icon as={AtSignIcon} />} />
-                <Input
-                  type="email"
-                  name="email"
-                  id="email"
-                  value={person.email}
-                  onChange={handleChange}
-                  placeholder="Email"
-                  variant="filled"
-                  textColor="black"
-                />
-              </InputGroup>
-            </FormControl>
+
             <FormControl isRequired>
               <Text fontSize="sm">Lozinka:</Text>
               <InputGroup>

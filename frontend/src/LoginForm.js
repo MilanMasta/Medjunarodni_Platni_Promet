@@ -45,7 +45,7 @@ const LoginForm = () => {
     ) {
       setMessage("");
       console.log("uso");
-      window.location.href = "./";
+      window.location.href = "./OnlineAccount";
     }
   }, [message]);
   const handleChange = (e) => {

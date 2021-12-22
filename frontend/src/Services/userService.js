@@ -85,3 +85,42 @@ export const depositOnAccount = (param) => {
       console.log(err.data);
     });
 };
+
+export const conversionToValute = (param) => {
+  let addr = readConfigFile();
+  return axios
+    .post(addr + "/conversion", param)
+    .then((response) => {
+      const item = response.data;
+      return item;
+    })
+    .catch((err) => {
+      console.log(err.data);
+    });
+};
+
+export const getTransactions = (param) => {
+  let addr = readConfigFile();
+  return axios
+    .post(addr + "/viewTransactionHistory", param)
+    .then((response) => {
+      const item = response.data;
+      return item;
+    })
+    .catch((err) => {
+      console.log(err.data);
+    });
+};
+
+export const makeTransaction = (param) => {
+  let addr = readConfigFile();
+  return axios
+    .post(addr + "/makeTransaction", param)
+    .then((response) => {
+      const item = response.data;
+      return item;
+    })
+    .catch((err) => {
+      console.log(err.data);
+    });
+};

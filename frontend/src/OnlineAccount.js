@@ -1,5 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { accountVerification, depositOnAccount } from "./Services/userService";
+import {
+  accountVerification,
+  depositOnAccount,
+  conversionToValute,
+} from "./Services/userService";
 import {
   Button,
   Stack,
@@ -46,6 +50,7 @@ const OnlineAccount = () => {
   const [array, setArray] = useState([]);
   const [currency, setCurrency] = useState([]);
   const [error, setError] = useState("");
+  const [error2, setError2] = useState("");
   const [creditCard, setcreditCard] = useState({
     number: "",
     username: "",
@@ -55,6 +60,14 @@ const OnlineAccount = () => {
     id: person.id,
   });
 
+  const [conversion, setConversion] = useState({
+    valuteFrom: "",
+    amountFrom: "",
+    valuteTo: "",
+    currencyFrom: "",
+    currencyTo: "",
+    id: person.id,
+  });
   useEffect(() => {
     setPerson(JSON.parse(localStorage.getItem("user")));
     fetch(URL)
@@ -91,10 +104,14 @@ const OnlineAccount = () => {
           } else {
             setError(item);
           }
+          return item;
         })
-        .then(() => {
-          setPerson(window.localStorage.getItem("user"));
-          window.location.reload();
+        .then((item) => {
+          console.log(item);
+          if (item !== "Verification failed.") {
+            setPerson(window.localStorage.getItem("user"));
+            window.location.reload();
+          }
         });
     } else {
       setError("Unesite sve podatke za verifikaciju.");
@@ -137,6 +154,66 @@ const OnlineAccount = () => {
     }
   };
 
+  const handleChange3 = (e) => {
+    const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
+    const value = e.target.value;
+    setConversion({
+      ...conversion,
+      ["currencyFrom"]: currency[conversion.valuteFrom],
+      ["currencyTo"]: currency[conversion.valuteTo],
+      [name]: value,
+    }); //person su prazna polja ukoliko nije nista proslijedjeno na unosu
+    console.log(currency["RSD"]);
+    // setConversion({
+    //   ...conversion,
+    //   ["currencyFrom"]: currency[conversion.valuteFrom],
+    // });
+    // setConversion({
+    //   ...conversion,
+    //   ["currencyTo"]: currency[conversion.valuteTo],
+    // });
+  };
+  const handleSubmit3 = (e) => {
+    e.preventDefault();
+    if (person.balances[conversion.valuteFrom] === undefined) {
+      setError2("Nemate trazeni racun.");
+    } else if (conversion.valuteTo === "") {
+      setError2("Odaberite valutu\n u koju konvertujete.");
+    } else if (conversion.valuteTo === conversion.valuteFrom) {
+      setError2("Ne mozete konvertovati\n u istu valutu.");
+    } else {
+      if (conversion.amountFrom === "") {
+        setError2("Unesite sumu novca\n koju konverujete.");
+      } else if (
+        person.balances[conversion.valuteFrom] - conversion.amountFrom <
+        0
+      ) {
+        setError2("Nemate dovoljno stanja u valuti " + conversion.valuteFrom);
+      } else if (parseInt(conversion.amountFrom) < 0) {
+        setError2("Kolicina novca mora\n biti pozitivan broj.");
+      } else {
+        setError2("");
+        console.log(conversion);
+        console.log(parseInt(person.balances[conversion.valuteFrom]));
+        conversionToValute(conversion)
+          .then((item) => {
+            if (item !== "Conversion failed.") {
+              window.localStorage.setItem("user", JSON.stringify(item));
+              setError("");
+            } else {
+              window.localStorage.setItem("user", JSON.stringify(item));
+              setPerson(item);
+            }
+          })
+          .then(() => {
+            if (error !== "Deposition failed.") {
+              setPerson(window.localStorage.getItem("user"));
+              window.location.reload();
+            }
+          });
+      }
+    }
+  };
   return (
     <Box
       margin={4}
@@ -150,7 +227,12 @@ const OnlineAccount = () => {
           {person && person.verified && (
             <Stack direction="row">
               <Stack direction="column">
-                <Select size="xs" placeholder="From:" name="currency">
+                <Select
+                  size="xs"
+                  placeholder="From:"
+                  name="valuteFrom"
+                  onChange={handleChange3}
+                >
                   {array.map((cur) => {
                     return (
                       <option key={cur} value={cur}>
@@ -159,7 +241,12 @@ const OnlineAccount = () => {
                     );
                   })}
                 </Select>
-                <Select size="xs" placeholder="To:" name="currency">
+                <Select
+                  size="xs"
+                  placeholder="To:"
+                  name="valuteTo"
+                  onChange={handleChange3}
+                >
                   {array.map((cur) => {
                     return (
                       <option key={cur} value={cur}>
@@ -168,6 +255,33 @@ const OnlineAccount = () => {
                     );
                   })}
                 </Select>
+                <Input
+                  type="number"
+                  name="amountFrom"
+                  id="amountFrom"
+                  value={conversion.amountFrom}
+                  onChange={handleChange3}
+                  placeholder="Kolicina"
+                  variant="filled"
+                  textColor="black"
+                />
+                <Button
+                  textColor="gray.200"
+                  colorScheme="yellow"
+                  textColor="black"
+                  margin={1}
+                  onClick={handleSubmit3}
+                >
+                  Napravi stanje
+                </Button>
+                <Center>
+                  {error2 && (
+                    <Alert status="error">
+                      <AlertIcon />
+                      {error2}
+                    </Alert>
+                  )}
+                </Center>
               </Stack>
               <Stack direction="column">
                 <>
