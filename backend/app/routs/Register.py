@@ -17,7 +17,9 @@ def register():
         db.session.commit()
         user2 = User.query.filter_by(email='{}'.format(req["email"])).one()
         balance = Balances(balance=0, valute="RSD", user_id=user2.id)
+        balance1 = Balances(balance=0, valute="BTC", user_id=user2.id)
         db.session.add(balance)
+        db.session.add(balance1)
         db.session.commit()
         return "Successfully registered." # mejl je jedinstven posalji pozitivan odg
     except:

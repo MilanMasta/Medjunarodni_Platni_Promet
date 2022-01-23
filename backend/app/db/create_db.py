@@ -42,10 +42,10 @@ from backend.app.Encoder import AlchemyEncoder
 # # db.session.add(user)
 # # db.session.commit()
 #
-for i in range(0, 10):
-    cCards = CCards(number=str(1000000000000000+i), expirationDate="11/22", csc=100+i,balance=1100+i*1540)
-    db.session.add(cCards)
-    db.session.commit()
+# for i in range(0, 10):
+#     cCards = CCards(number=str(1000000000000000+i), expirationDate="11/22", csc=100+i,balance=1100+i*1540)
+#     db.session.add(cCards)
+#     db.session.commit()
 
 # balance = Balances(balance=0, valute="AUD",user_id=1)
 #
@@ -116,3 +116,5 @@ for i in range(0, 10):
 #     # data.append(){ t }
 #return("transactions": data)
 # print(json_strng)
+
+#transaction = Transaction.query.filter_by(id='{}'.format("6")).one()
