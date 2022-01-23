@@ -3,6 +3,7 @@ import {
   accountVerification,
   depositOnAccount,
   conversionToValute,
+  refreshAccount,
 } from "./Services/userService";
 import {
   Button,
@@ -24,6 +25,14 @@ import {
   StatNumber,
   StatHelpText,
   Select,
+  Th,
+  Tr,
+  Td,
+  Table,
+  TableCaption,
+  Thead,
+  Tbody,
+  Tfoot,
 } from "@chakra-ui/react";
 import {
   EmailIcon,
@@ -44,9 +53,10 @@ const OnlineAccount = () => {
   const [payment, setPayment] = useState({
     amount: "",
     rsdBalance: "",
+    btcBalance: "",
     id: "",
   });
-
+  const [valuteAmount, setValuteAmount] = useState([]);
   const [array, setArray] = useState([]);
   const [currency, setCurrency] = useState([]);
   const [error, setError] = useState("");
@@ -77,13 +87,21 @@ const OnlineAccount = () => {
         //setBaseCurrency(data.base);
         setCurrency(data.rates);
         setArray([data.base, ...Object.keys(data.rates)]);
+        setValuteAmount(person.balances);
       });
   }, []);
 
   useEffect(() => {
     var rsdbal = person.balances["RSD"];
+    var btcBal = person.balances["BTC"];
+
     console.log(rsdbal);
-    setPayment({ amount: "", rsdBalance: rsdbal, id: person.id });
+    setPayment({
+      amount: "",
+      rsdBalance: rsdbal,
+      btcBalance: btcBal,
+      id: person.id,
+    });
   }, [person]);
   const handleChange = (e) => {
     const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
@@ -126,7 +144,7 @@ const OnlineAccount = () => {
   };
   const handleSubmit2 = (e) => {
     e.preventDefault();
-
+    console.log(valuteAmount);
     console.log(payment);
     if (payment.amount) {
       if (payment.amount >= 1) {
@@ -214,6 +232,14 @@ const OnlineAccount = () => {
       }
     }
   };
+
+  const refrshUser = (e) => {
+    refreshAccount(person).then((item) => {
+      window.localStorage.setItem("user", JSON.stringify(item));
+      setPerson(item);
+      setValuteAmount(item.balances);
+    });
+  };
   return (
     <Box
       margin={4}
@@ -282,6 +308,31 @@ const OnlineAccount = () => {
                     </Alert>
                   )}
                 </Center>
+                <Table variant="simple">
+                  <TableCaption>
+                    Stanje online racuna u drugim valutama
+                  </TableCaption>
+                  <Thead>
+                    <Tr>
+                      <Th>Valuta</Th>
+                      <Th isNumeric>Stanje</Th>
+                    </Tr>
+                  </Thead>
+                  <Tbody>
+                    {Object.entries(valuteAmount).map(([key, value]) => (
+                      <Tr>
+                        <Td>{key}</Td>
+                        <Td>{value}</Td>
+                      </Tr>
+                    ))}
+                  </Tbody>
+                  <Tfoot>
+                    <Tr>
+                      <Th>Valuta</Th>
+                      <Th isNumeric>Stanje</Th>
+                    </Tr>
+                  </Tfoot>
+                </Table>
               </Stack>
               <Stack direction="column">
                 <>
@@ -316,7 +367,13 @@ const OnlineAccount = () => {
                       <StatLabel>Trenutno stanje on-line racuna</StatLabel>
                       <StatNumber>{payment.rsdBalance}</StatNumber>
                       <StatHelpText>RSD</StatHelpText>
+                      <StatLabel>Trenutno stanje BTC racuna</StatLabel>
+                      <StatNumber>{payment.btcBalance}</StatNumber>
+                      <StatHelpText>BTC</StatHelpText>
                     </Stat>
+                    <Button margin={2} width="100%" onClick={refrshUser}>
+                      Osvjezi racun
+                    </Button>
                     <br />
                     <Divider />
                     <br />

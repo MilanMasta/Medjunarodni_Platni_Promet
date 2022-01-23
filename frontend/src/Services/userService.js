@@ -99,6 +99,19 @@ export const conversionToValute = (param) => {
     });
 };
 
+export const refreshAccount = (param) => {
+  let addr = readConfigFile();
+  return axios
+    .post(addr + "/refreshAccount", param)
+    .then((response) => {
+      const item = response.data;
+      return item;
+    })
+    .catch((err) => {
+      console.log(err.data);
+    });
+};
+
 export const getTransactions = (param) => {
   let addr = readConfigFile();
   return axios

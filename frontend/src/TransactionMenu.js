@@ -20,6 +20,18 @@ import {
   InputLeftElement,
   Icon,
   AlertIcon,
+  Th,
+  Tr,
+  Td,
+  Table,
+  TableCaption,
+  Thead,
+  Tbody,
+  Tfoot,
+  Stat,
+  StatLabel,
+  StatNumber,
+  StatHelpText,
 } from "@chakra-ui/react";
 import { LockIcon, AtSignIcon, ArrowRightIcon } from "@chakra-ui/icons";
 
@@ -30,8 +42,14 @@ const TransactionMenu = () => {
     JSON.parse(localStorage.getItem("user"))
   );
   const [error, setError] = useState("");
+  const [btcrsdValue, setBtcRsdValue] = useState({
+    rsdBalance: "",
+    btcBalance: "",
+  });
   const [transaction, setTransaction] = useState({
+    state: "",
     amount: "",
+    btcamount: "",
     reciever: "",
     destination: "",
     id: person.id,
@@ -42,6 +60,14 @@ const TransactionMenu = () => {
   //   }, []);
 
   useEffect(() => {
+    var rsdbal = person.balances["RSD"];
+    var btcBal = person.balances["BTC"];
+
+    console.log(rsdbal);
+    setBtcRsdValue({
+      rsdBalance: rsdbal,
+      btcBalance: btcBal,
+    });
     console.log(person);
     console.log("poziv");
     getTransactions(person)
@@ -67,14 +93,33 @@ const TransactionMenu = () => {
   const handleSubmit = (e) => {
     e.preventDefault();
     if (
-      transaction.amount === "" ||
+      (transaction.amount === "" && transaction.btcamount === "") ||
       transaction.destination === "" ||
       transaction.reciever === ""
     ) {
       setError("Unesite sva polja potrebna za transakciju.");
-    } else if (person.balances["RSD"] - parseInt(transaction.amount) < 0) {
-      setError("Nemate dovoljno novca na online racunu.");
+    } else if (
+      transaction.destination === "bitcoin" &&
+      (transaction.btcamount === "" || transaction.reciever === "")
+    ) {
+      setError("Unesite sva polja potrebna za transakciju.");
+    } else if (
+      transaction.destination === "banka" &&
+      (transaction.amount === "" || transaction.reciever === "")
+    ) {
+      setError("Unesite sva polja potrebna za transakciju.");
+    } else if (
+      transaction.destination === "onlineaccount" &&
+      (transaction.amount === "" || transaction.reciever === "")
+    ) {
+      setError("Unesite sva polja potrebna za transakciju.");
     } else {
+      // if (transaction.amount!==""){
+      //   if(transaction.destination==="bitcoin"){
+      //           setError("Unesite sva polja potrebna za transakciju.");
+
+      //   }
+      // }
       console.log("else");
       makeTransaction(transaction)
         .then((item) => {
@@ -88,7 +133,7 @@ const TransactionMenu = () => {
         })
         .then(() => {
           if (error !== "Transaction failed.") {
-            alert("Transakcija uspjesna.");
+            //alert("Transakcija poslata.");
             setPerson(window.localStorage.getItem("user"));
             window.location.reload();
           }
@@ -98,6 +143,18 @@ const TransactionMenu = () => {
   };
   return (
     <Stack variant="filled" direction="column">
+      <Box>
+        <Stat>
+          <Stack direction="row">
+            <StatLabel>Trenutno stanje on-line racuna</StatLabel>
+            <StatNumber>{btcrsdValue.rsdBalance}</StatNumber>
+            <StatHelpText>RSD</StatHelpText>
+            <StatLabel>Trenutno stanje BTC racuna</StatLabel>
+            <StatNumber>{btcrsdValue.btcBalance}</StatNumber>
+            <StatHelpText>BTC</StatHelpText>
+          </Stack>
+        </Stat>
+      </Box>
       <Box
         margin={4}
         border="1px"
@@ -108,6 +165,19 @@ const TransactionMenu = () => {
       >
         <FormControl isRequired>
           <Text>Kolicina novca:</Text>
+          <InputGroup>
+            <InputLeftElement children={<Icon as={ArrowRightIcon} />} />
+            <Input
+              type="number"
+              name="btcamount"
+              id="btcamount"
+              value={transaction.btcamount}
+              onChange={handleChange}
+              placeholder="BTC"
+              variant="filled"
+              textColor="black"
+            />
+          </InputGroup>
           <InputGroup>
             <InputLeftElement children={<Icon as={ArrowRightIcon} />} />
             <Input
@@ -130,6 +200,9 @@ const TransactionMenu = () => {
               </Radio>
               <Radio name="destination" value="onlineaccount">
                 On-line account
+              </Radio>
+              <Radio name="destination" value="bitcoin">
+                Bitcoin
               </Radio>
             </Stack>
           </RadioGroup>
@@ -171,6 +244,9 @@ const TransactionMenu = () => {
           )}
         </Center>
       </Box>
+      <Box>
+        <Stack direction="row"></Stack>
+      </Box>
       <Box
         margin={4}
         border="1px"
@@ -178,7 +254,50 @@ const TransactionMenu = () => {
         borderRadius="lg"
         borderColor="gray.300"
       >
-        <Select fontSize={20} bg="yellow" spacing={3}>
+        <Table variant="simple" variant="striped" colorScheme="yellow">
+          <TableCaption>Transaction</TableCaption>
+          <Thead>
+            <Tr>
+              <Th>Stanje transakcije</Th>
+              <Th>Posiljalac</Th>
+              <Th>Primalac</Th>
+              <Th>Kolicina (RSD)</Th>
+            </Tr>
+          </Thead>
+          <Tbody>
+            {transactions.map((cur) => {
+              return (
+                <Tr>
+                  {cur.state === "Odbijeno" && (
+                    <>
+                      <Td textColor="red">{cur.state}</Td>
+                      <Td>{cur.sender}</Td>
+                      <Td>{cur.reciever}</Td>
+                      <Td>{cur.amount}</Td>
+                    </>
+                  )}
+                  {cur.state !== "Odbijeno" && (
+                    <>
+                      <Td>{cur.state}</Td>
+                      <Td>{cur.sender}</Td>
+                      <Td>{cur.reciever}</Td>
+                      <Td>{cur.amount}</Td>
+                    </>
+                  )}
+                </Tr>
+              );
+            })}
+          </Tbody>
+          <Tfoot>
+            <Tr>
+              <Th>Stanje transakcije</Th>
+              <Th>Posiljalac</Th>
+              <Th>Primalac</Th>
+              <Th>Kolicina (RSD)</Th>
+            </Tr>
+          </Tfoot>
+        </Table>
+        {/* <Select fontSize={20} bg="yellow" spacing={3}>
           <option>Transakcije</option>
           {transactions.map((cur) => {
             return (
@@ -192,7 +311,7 @@ const TransactionMenu = () => {
               </option>
             );
           })}
-        </Select>
+        </Select> */}
       </Box>
     </Stack>
   );
