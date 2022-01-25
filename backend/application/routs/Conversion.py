@@ -1,10 +1,9 @@
 
 from flask import request
-from backend.app import app
-from backend.app.db import db
-from backend.app.db.Balances import Balances
-from backend.app.db.User import User
-
+from application import app
+from application.db import db
+from application.db.Balances import Balances
+from application.db.User import User
 
 @app.route("/conversion", methods=['POST'])
 def conversion():

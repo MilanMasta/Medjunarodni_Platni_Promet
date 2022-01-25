@@ -1,6 +1,6 @@
 import json
 
-from backend.app import db
+from application import db
 
 class Balances(db.Model):
     idb = db.Column(db.Integer, primary_key=True)

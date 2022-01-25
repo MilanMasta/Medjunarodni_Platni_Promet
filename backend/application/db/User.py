@@ -1,7 +1,7 @@
 import copy
 import json
-from backend.app.db import db
-from backend.app.db.Balances import Balances
+from application.db import db
+from application.db.Balances import Balances
 
 
 class User(db.Model):

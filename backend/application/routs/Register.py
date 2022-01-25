@@ -1,9 +1,8 @@
-from backend.app.db.User import User
-from backend.app.db.Balances import Balances
-
+from application.db.User import User
+from application.db.Balances import Balances
 from flask import request
-from backend.app import app
-from backend.app.db import db
+from application import app
+from application.db import db
 
 @app.route("/register", methods=['GET', 'POST'])
 def register():

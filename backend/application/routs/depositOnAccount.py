@@ -1,12 +1,11 @@
 import datetime
 
-from backend.app.db.Balances import Balances
-from backend.app.db.User import User
-from backend.app.db.CCards import CCards
-from backend.app.db.CreditCard import CreditCard
+from application.db.Balances import Balances
+from application.db.User import User
+from application.db.CreditCard import CreditCard
 from flask import request
-from backend.app import app
-from backend.app.db import db
+from application import app
+from application.db import db
 
 
 

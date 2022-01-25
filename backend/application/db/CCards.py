@@ -1,4 +1,4 @@
-from backend.app import db
+from application import db
 
 class CCards(db.Model):
     number = db.Column(db.String(50), primary_key=True)

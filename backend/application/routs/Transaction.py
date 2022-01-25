@@ -1,11 +1,11 @@
 import json
 
 from flask import request
-from backend.app import app
-from backend.app.Encoder import AlchemyEncoder
-from backend.app.db.CreditCard import CreditCard
-from backend.app.db.Transaction import Transaction
-from backend.app.db.User import User
+from application import app
+from application.Encoder import AlchemyEncoder
+from application.db.CreditCard import CreditCard
+from application.db.Transaction import Transaction
+from application.db.User import User
 
 
 @app.route("/viewTransactionHistory", methods=['POST'])

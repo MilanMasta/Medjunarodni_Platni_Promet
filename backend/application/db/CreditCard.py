@@ -1,4 +1,4 @@
-from backend.app import db
+from application import db
 
 class CreditCard(db.Model):
     ide = db.Column(db.Integer, primary_key=True)
