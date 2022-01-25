@@ -32,8 +32,14 @@ import {
   StatLabel,
   StatNumber,
   StatHelpText,
+  Divider,
 } from "@chakra-ui/react";
-import { LockIcon, AtSignIcon, ArrowRightIcon } from "@chakra-ui/icons";
+import {
+  LockIcon,
+  AtSignIcon,
+  ArrowRightIcon,
+  SearchIcon,
+} from "@chakra-ui/icons";
 
 import { getTransactions, makeTransaction } from "./Services/userService";
 const TransactionMenu = () => {
@@ -55,6 +61,15 @@ const TransactionMenu = () => {
     id: person.id,
   });
   const [transactions, setTransactions] = useState([]);
+  const [transactionsCopy, setTransactionsCopy] = useState([]);
+
+  const [search, setSearch] = useState({
+    searchType: "",
+  });
+  const [sort, setSort] = useState({
+    sortType: "",
+    growDesc: "",
+  });
   //   useEffect(() => {
   // setPerson(JSON.parse(localStorage.getItem("user")));
   //   }, []);
@@ -70,10 +85,12 @@ const TransactionMenu = () => {
     });
     console.log(person);
     console.log("poziv");
+    //TREBA OTKOMENATIRSATI
     getTransactions(person)
       .then((item) => {
         console.log(item);
         setTransactions(item);
+        setTransactionsCopy(item);
       })
       .then(() => {
         console.log(transactions);
@@ -141,8 +158,114 @@ const TransactionMenu = () => {
     }
     console.log(transaction);
   };
+  ///PRETRAGA
+  const handleChange2 = (e) => {
+    const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
+    const value = e.target.value;
+
+    setSearch({ ...search, [name]: value }); //person su prazna polja ukoliko nije nista proslijedjeno na unosu
+    console.log(search);
+  };
+
+  const handleSubmit2 = (e) => {
+    console.log("usao u proveru");
+    console.log(search.searchType);
+    e.preventDefault();
+    var fulllist = transactionsCopy;
+    console.log(search);
+    if (search.searchType === "") {
+      setTransactions(fulllist);
+    } else {
+      if (search.searchType === "intheprocessing") {
+        fulllist = fulllist.filter((x) =>
+          x.state.toLowerCase().includes("u obradi")
+        );
+      } else if (search.searchType === "processed") {
+        fulllist = fulllist.filter((x) =>
+          x.state.toLowerCase().includes("obradjeno")
+        );
+      } else {
+        console.log("usao u proveruuuuuu");
+        fulllist = fulllist.filter((x) =>
+          x.state.toLowerCase().includes("odbijeno")
+        );
+      }
+      setTransactions(fulllist);
+    }
+  };
+  ///FILTRIRANJE
+  const handleChange3 = (e) => {
+    const name = e.target.name; //atribut u tagu, da li je to email, godine ili ime
+    const value = e.target.value;
+
+    setSort({ ...sort, [name]: value }); //person su prazna polja ukoliko nije nista proslijedjeno na unosu
+    console.log(sort);
+  };
+
+  const handleSubmit3 = (e) => {
+    e.preventDefault();
+    var fulllist = transactionsCopy;
+    if (sort.growDesc === "" || sort.sortType === "") {
+      setTransactions(fulllist);
+    } else {
+      if (sort.growDesc === "descending") {
+        if (sort.sortType === "sender") {
+          console.log("usaoooooo");
+          console.log(fulllist);
+          // fulllist
+          //   .sort(function (first, second) {
+          //     return second[1]["sender"] - first[1]["sender"];
+          //   })
+          //   .reverse();
+          console.log(fulllist);
+
+          //fulllist.sender.sort((a, b) => a - b).reverse());
+          //setTransactions(fulllist);
+        } else if (sort.sortType === "receiver") {
+          fulllist.reciever.sort((a, b) => a - b).reverse();
+          setTransactions(fulllist);
+        } else {
+          fulllist.sort((a, b) =>
+            parseFloat(a.amount) > parseFloat(b.amount)
+              ? 1
+              : parseFloat(b.amount) > parseFloat(a.amount)
+              ? -1
+              : 0
+          );
+          setTransactions(fulllist);
+        }
+      } else {
+        if (sort.sortType === "sender") {
+          // fulllist.sender.sort((a, b) => a - b);
+          // setTransactions(fulllist);
+          fulllist
+            .sort(function (first, second) {
+              return second[1].sender - first[1].sender;
+            })
+            .reverse();
+          console.log(fulllist);
+        } else if (sort.sortType === "receiver") {
+          fulllist.reciever.sort((a, b) => a - b);
+          setTransactions(fulllist);
+        } else {
+          fulllist.sort((a, b) =>
+            parseFloat(a.amount) < parseFloat(b.amount)
+              ? 1
+              : parseFloat(b.amount) < parseFloat(a.amount)
+              ? -1
+              : 0
+          );
+          setTransactions(fulllist);
+        }
+      }
+    }
+  };
+
+  const refresh = (e) => {
+    setTransactions(transactionsCopy);
+  };
   return (
-    <Stack variant="filled" direction="column">
+    <Stack variant="filled" direction="column" width="100%">
       <Box>
         <Stat>
           <Stack direction="row">
@@ -178,6 +301,7 @@ const TransactionMenu = () => {
               textColor="black"
             />
           </InputGroup>
+          <br />
           <InputGroup>
             <InputLeftElement children={<Icon as={ArrowRightIcon} />} />
             <Input
@@ -244,8 +368,86 @@ const TransactionMenu = () => {
           )}
         </Center>
       </Box>
-      <Box>
-        <Stack direction="row"></Stack>
+      <Box width="100%">
+        <Stack direction="row" width="100%">
+          <form action="submit">
+            <Stack direction="row" padding={2} width="100%">
+              <RadioGroup width="100%">
+                <Stack direction="row" onClick={handleChange2} width="100%">
+                  <Text>Filtriraj:</Text>
+                  <Radio name="searchType" value="intheprocessing">
+                    U obradi
+                  </Radio>
+                  <Radio name="searchType" value="processed">
+                    Obradjene
+                  </Radio>
+                  <Radio name="searchType" value="rejected">
+                    Odbijene
+                  </Radio>
+                </Stack>
+              </RadioGroup>
+              <Button
+                type="submit"
+                onClick={handleSubmit2}
+                colorScheme="green"
+                variant="solid"
+                alignSelf="end"
+                margin={2}
+              >
+                <SearchIcon />
+              </Button>
+            </Stack>
+          </form>
+        </Stack>
+        <Stack direction="row" width="100%">
+          <form action="submit">
+            <Stack direction="row" padding={2} width="100%">
+              <Stack direction="row" onClick={handleChange3} width="100%">
+                <RadioGroup width="100%">
+                  <Text>Sortiraj po:</Text>
+                  <Radio name="sortType" value="sender">
+                    Posiljaocu
+                  </Radio>
+                  <Radio name="sortType" value="receiver">
+                    Primaocu
+                  </Radio>
+                  <Radio name="sortType" value="amount">
+                    Kolicini
+                  </Radio>
+                  <Divider orientation="vertical" width={3} height={50} />
+                </RadioGroup>
+                <RadioGroup width="100%">
+                  <Radio name="growDesc" value="growing">
+                    Rastuce
+                  </Radio>
+                  <Radio name="growDesc" value="descending">
+                    Opadajuce
+                  </Radio>
+                </RadioGroup>
+                <Button
+                  type="submit"
+                  onClick={handleSubmit3}
+                  colorScheme="green"
+                  variant="solid"
+                  alignSelf="end"
+                  margin={2}
+                >
+                  <SearchIcon />
+                </Button>
+              </Stack>
+
+              <Button
+                onClick={refresh}
+                colorScheme="green"
+                variant="solid"
+                alignSelf="end"
+                margin={2}
+              >
+                Prikazi sve
+              </Button>
+            </Stack>
+          </form>
+        </Stack>
       </Box>
       <Box
         margin={4}
@@ -261,7 +463,7 @@ const TransactionMenu = () => {
               <Th>Stanje transakcije</Th>
               <Th>Posiljalac</Th>
               <Th>Primalac</Th>
-              <Th>Kolicina (RSD)</Th>
+              <Th>Kolicina (RSD/BTC)</Th>
             </Tr>
           </Thead>
           <Tbody>
@@ -293,25 +495,10 @@ const TransactionMenu = () => {
               <Th>Stanje transakcije</Th>
               <Th>Posiljalac</Th>
               <Th>Primalac</Th>
-              <Th>Kolicina (RSD)</Th>
+              <Th>Kolicina (RSD/BTC)</Th>
             </Tr>
           </Tfoot>
         </Table>
-        {/* <Select fontSize={20} bg="yellow" spacing={3}>
-          <option>Transakcije</option>
-          {transactions.map((cur) => {
-            return (
-              <option key={cur.id} value={cur.id}>
-                {cur.sender.toString() +
-                  " je izvrsio uplatu ka racunu " +
-                  cur.reciever.toString() +
-                  " u iznosu od " +
-                  cur.amount.toString() +
-                  " RSD."}
-              </option>
-            );
-          })}
-        </Select> */}
       </Box>
     </Stack>
   );

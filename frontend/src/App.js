@@ -96,7 +96,7 @@ function App() {
                     Pogledaj profil
                   </Button>
                 )}
-                {user && (
+                {user && user.verified &&(
                   <Button
                     onClick={() => (window.location.href = "./TransactionMenu")}
                     textColor="gray.200"
